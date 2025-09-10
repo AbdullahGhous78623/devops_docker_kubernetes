@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: abdullah-configmap
-  namespace: abdullah
+  name: {{ .Values.config.name }}
+  namespace: {{ .Values.config.namespace }}
 data:
-  MONGODB_URI: "mongodb://mongo:27017/myDatabase"
-  SESSION_SECRET: "1234"
-  PORT: "3130"
+  MONGODB_URI: {{ .Values.config.mongodbUri | quote }}
+  SESSION_SECRET: {{ .Values.config.sessionSecret | quote }}
+  PORT: {{ .Values.config.port | quote }}
+
 
 
 

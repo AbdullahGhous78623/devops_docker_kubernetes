@@ -1,0 +1,33 @@
+Install helm on your server
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+
+How to create a helm chart
+helm create <chart_name>
+How to validate helm chart before running it
+helm install <release_name> --debug --dry-run <chart_name>
+How to install helm chart
+helm install <release_name>  <chart_name>
+How to upgrade a chart
+helm upgrade <release_name> <chart_name>
+
+
+How to rollback helm chart
+helm rollback <release_name> <chart_name>
+How to validate your yaml files which are available in templates folder
+helm template ./<chart_name> --debug
+How to see yaml files which are available in templates folders
+helm template ./<chart_name>
+How to find out errors or misconfigurations in your helm chart
+helm lint <chart_name>
+
+
+
+helm upgrade vegetable-app .          # Apply changes
+helm rollback vegetable-app 1        # Rollback to previous revision
+helm uninstall vegetable-app         # Cleanly delete all resources
+
+
+

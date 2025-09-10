@@ -1,0 +1,68 @@
+# Create the docker group (if not exists)
+sudo groupadd docker
+
+# Add your jenkins user to the docker group
+sudo usermod -aG docker jenkins
+
+# Restart docker service
+sudo systemctl restart docker
+
+# Restart Jenkins so new group takes effect
+sudo systemctl restart jenkins
+
+
+
+sudo mkdir -p /var/lib/jenkins/.aws
+sudo cp -r /root/.aws/* /var/lib/jenkins/.aws/
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.aws
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/AbdullahGhous78623/book-my-show.git'
+            }
+        }
+
+        stage('Docker Build, Tag, Push') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        dir('bookmyshow-app') {
+                            sh 'docker build -t book-my-show:v1 .'
+                        }
+
+                        // Tag image
+                        sh 'docker tag book-my-show:v1 abdullah78623/book-my-show:v1'
+
+                        // Push image to Docker Hub
+                        sh 'docker push abdullah78623/book-my-show:v1'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    withKubeConfig(
+                        caCertificate: '', 
+                        clusterName: '', 
+                        contextName: '', 
+                        credentialsId: 'k8s-token', 
+                        namespace: 'abdullah', 
+                        restrictKubeConfigAccess: false, 
+                        serverUrl: ''
+                    ) {
+                        sh 'kubectl apply -f deployment.yml'
+                        sh 'kubectl apply -f service.yml'
+                    }
+                }
+            }
+        }
+    }
+}
+

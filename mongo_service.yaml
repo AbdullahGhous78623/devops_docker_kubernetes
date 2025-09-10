@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
-  namespace: murali-ns
+  name: mongo
+  namespace: abdullah
 spec:
   selector:
     app: mongodb

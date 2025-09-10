@@ -5,7 +5,7 @@ metadata:
 spec:
   type: LoadBalancer           # Exposes service via cloud provider LB
   selector:
-    app: user                   ##very important
+    app: bma                 ##very important
   ports:
     - port: 80                # Service port (external clients use this)
-      targetPort: 3130        # Container port inside the pod
+      targetPort: 3000      # Container port inside the pod

@@ -8,6 +8,11 @@ volumeBindingMode: WaitForFirstConsumer
 reclaimPolicy: Delete
 parameters:
   type: gp2
+# allowedTopologies:
+# - matchLabelExpressions:
+#   - key: topology.kubernetes.io/zone
+#     values:
+#       - ap-south-1a   # replace with your node's AZ
 
 
 

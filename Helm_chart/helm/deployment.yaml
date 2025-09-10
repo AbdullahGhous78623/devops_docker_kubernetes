@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nodeAppDeployment.name }}
+  namespace: {{ .Values.nodeAppDeployment.namespace }}
+spec:
+  replicas: {{ .Values.nodeAppDeployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.nodeAppDeployment.appLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.nodeAppDeployment.appLabel }}
+    spec:
+      containers:
+      - name: {{ .Values.nodeAppDeployment.containerName }}
+        image: {{ .Values.nodeAppDeployment.image }}
+        ports:
+        - containerPort: {{ .Values.nodeAppDeployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.nodeAppDeployment.configMapName }}
+        - secretRef:
+            name: {{ .Values.nodeAppDeployment.secretName }}

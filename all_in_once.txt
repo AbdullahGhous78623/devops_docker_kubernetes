@@ -1,0 +1,9 @@
+kubectl apply -f config_map.yaml -n abdullah \
+  -f secret.yaml -n abdullah \
+  -f mongo-deployment.yaml -n abdullah \
+  -f mongo-service.yaml -n abdullah \
+  -f pvc.yaml -n abdullah \
+  -f sc.yaml -n abdullah \
+  -f service.yaml -n abdullah \
+  -f deployment.yaml -n abdullah \
+  -f ingress.yaml -n abdullah

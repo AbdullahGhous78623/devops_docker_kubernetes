@@ -1,0 +1,88 @@
+config:
+  mongodbUri: "mongodb://mongo:27017/myDatabase"
+  sessionSecret: "1234"
+  port: "3130"
+  namespace: "abdullah"
+  name: "abdullah-configmap"
+
+secret:
+  name: "abdullah-secret"
+  namespace: "abdullah"
+  emailUser: "cagantyteja2502@gmail.com"
+  emailPass: "yxor buj r dnt alzp"
+
+mongodb:
+  name: "mongodb"
+  namespace: "abdullah"
+  replicas: 1
+  image: "mongo:latest"
+  port: 27017
+  envName: "MONGO_INITDB_DATABASE"
+  database: "myDatabase"
+  pvcName: "abdullah-pvc"
+  storageMountPath: "/data/db"
+  volumeName: "mongo-storage"
+
+
+mongoService:
+  name: "mongo"
+  namespace: "abdullah"
+  selectorApp: "mongodb"
+  port: 27017
+  targetPort: 27017
+  protocol: "TCP"
+
+mongoPVC:
+  name: "abdullah-pvc"
+  namespace: "abdullah"
+  accessMode: "ReadWriteOnce"
+  storage: "1Gi"
+  storageClassName: "abdullah-sc"
+
+
+mongoStorageClass:
+  name: "abdullah-sc"
+  provisioner: "ebs.csi.aws.com"
+  reclaimPolicy: "Delete"
+  volumeBindingMode: "WaitForFirstConsumer"
+  type: "gp2"
+
+nodeAppService:
+  name: "node-app-service"
+  namespace: "abdullah"
+  type: "ClusterIP"
+  selectorApp: "userprofile"
+  port: 80
+  targetPort: 3130
+
+nodeAppDeployment:
+  name: "userprofile-deployment"
+  namespace: "abdullah"
+  replicas: 2
+  appLabel: "userprofile"
+  containerName: "usernode-js"
+  image: "abdullah78623/retail-apps:v1"
+  containerPort: 3130
+  configMapName: "abdullah-configmap"
+  secretName: "abdullah-secret"
+
+nodeAppIngress:
+  name: "abdullah-ingress"
+  namespace: "abdullah"
+  ingressClassName: "nginx"
+  serviceName: "node-app-service"
+  servicePort: 80
+  path: "/"
+  pathType: "Prefix"
+  rewriteTarget: "/"
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.name }}
+  namespace: {{ .Values.config.namespace }}
+data:
+  MONGODB_URI: {{ .Values.config.mongodbUri | quote }}
+  SESSION_SECRET: {{ .Values.config.sessionSecret | quote }}
+  PORT: {{ .Values.config.port | quote }}
