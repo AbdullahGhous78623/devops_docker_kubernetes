@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userprofile-deployment
+  namespace: abdullah
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: userprofile
+  template:
+    metadata:
+      labels:
+        app: userprofile
+    spec:
+      containers:
+      - name: usernode-js
+        image: abdullah78623/retail-apps:v1
+        ports:
+        - containerPort: 3130
+        envFrom:
+        - configMapRef:
+            name: abdullah-configmap
+        - secretRef:
+            name: abdullah-secret

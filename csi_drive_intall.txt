@@ -1,0 +1,26 @@
+
+eksctl create addon --name aws-ebs-csi-driver --cluster cluster1 --region us-east-1
+
+kubectl get pods -n kube-system | grep ebs
+
+
+===============================================================
+
+aws eks describe-nodegroup \
+  --cluster-name k8s-cluster-2 \
+  --nodegroup-name nodes-2 \
+  --region ap-south-1 \
+  --query "nodegroup.nodeRole" --output text
+
+
+======================
+
+
+aws iam attach-role-policy \
+  --role-name eksctl-k8s-cluster-2-nodegroup-nod-NodeInstanceRole-ouoJD5QILYPa \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+
+
+=========================================
+
+aws eks describe-addon --cluster-name k8s-cluster-2 --addon-name aws-ebs-csi-driver --region ap-south-1

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: abdullah-configmap
+  namespace: abdullah
+data:
+  MONGODB_URI: "mongodb://mongo:27017/myDatabase"
+  SESSION_SECRET: "1234"
+  PORT: "3130"
+
+
+
+# Steps:
+
+# kubectl apply -f configmap.yaml -n abdullah
+
+# kubectl apply -f secret.yaml -n abdullah
+# kubectl apply -f deployment.yaml -n abdullah
+
+# kubectl get configmap -n abdullah
+# kubectl get secret -n abdullah
+# after changing values
+
+# kubectl apply -f configmap.yaml -n abdullah
+# kubectl apply -f secret.yaml -n abdullah
+
+# kubectl rollout restart deployment userprofile-deployment -n abdullah
+
+
+
+
+

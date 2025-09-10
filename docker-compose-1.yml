@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .                # Build local Node.js image
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mydb
+    depends_on:
+      - mongo
+    networks:
+      - myapp-network      # Connect Node app to custom network
+
+  mongo:
+    image: mongo:latest     # Pull from Docker Hub
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - myapp-network      # Connect Mongo to same network
+
+# Named volume for MongoDB data persistence
+volumes:
+  mongo-data:
+
+# Custom network definition
+networks:
+  myapp-network:
+    driver: bridge

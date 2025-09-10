@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# --- Step 1: Update and install dependencies ---
+sudo apt update -y
+sudo apt install -y curl unzip tar
+
+# --- Step 2: Install eksctl ---
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+echo "Downloading eksctl..."
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+echo "Verifying eksctl checksum (optional)..."
+curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+
+echo "Extracting eksctl..."
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+sudo mv /tmp/eksctl /usr/local/bin/eksctl
+
+echo "eksctl installed successfully!"
+eksctl version
+
+# --- Step 3: Install kubectl ---
+echo "Downloading kubectl..."
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+echo "Downloading kubectl checksum..."
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+echo "Validating kubectl..."
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+
+echo "Installing kubectl..."
+chmod +x kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+echo "kubectl installed successfully!"
+kubectl version --client
+
+# --- Step 4: Install AWS CLI ---
+echo "Downloading AWS CLI..."
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+rm -rf awscliv2.zip aws
+
+echo "AWS CLI installed successfully!"
+aws --version
+
+# --- Step 5: Configure AWS CLI ---
+echo "Please enter your AWS credentials:"
+aws configure
+
+
+eksctl create cluster \
+  --name k8s-cluster-2 \
+  --region ap-south-1 \
+  --nodegroup-name nodes-2 \
+  --node-type c7i-flex.large \
+  --nodes 2 \
+  --zones ap-south-1a,ap-south-1b

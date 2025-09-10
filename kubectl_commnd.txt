@@ -1,0 +1,98 @@
+# =========================
+# GROUP 1: Cluster & Node Inspection
+# =========================
+
+# View cluster info (control plane, API server)
+kubectl cluster-info
+
+# List all nodes in the cluster
+kubectl get nodes
+
+# Detailed info about a specific node
+kubectl describe node <node-name>
+
+# =========================
+# GROUP 2: Pods Inspection
+# =========================
+
+# List all pods in the namespace 'abdullah'
+kubectl get pods -n abdullah
+
+# Describe a specific pod in 'abdullah' namespace
+kubectl describe pod <pod-name> -n abdullah
+
+# Stream logs from a pod
+kubectl logs <pod-name> -n abdullah
+
+# Stream logs from a specific container inside a pod
+kubectl logs <pod-name> -c <container-name> -n abdullah
+
+# Execute command inside a running pod (interactive shell)
+kubectl exec -it <pod-name> -n abdullah -- /bin/bash
+
+# =========================
+# GROUP 3: Services
+# =========================
+
+# List all services in 'abdullah' namespace
+kubectl get svc -n abdullah
+
+# Describe a service in detail
+kubectl describe svc <service-name> -n abdullah
+
+# =========================
+# GROUP 4: Deployments
+# =========================
+
+# List all deployments in 'abdullah' namespace
+kubectl get deployments -n abdullah
+
+# Describe a specific deployment
+kubectl describe deployment <deployment-name> -n abdullah
+
+# =========================
+# GROUP 5: Namespaces
+# =========================
+
+# List all namespaces
+kubectl get ns
+
+# Describe a namespace
+kubectl describe ns abdullah
+
+# =========================
+# GROUP 6: Creating / Deleting Resources
+# =========================
+
+# Create resource from YAML
+kubectl apply -f <file.yaml> -n abdullah
+
+# Delete resource from YAML
+kubectl delete -f <file.yaml> -n abdullah
+
+# Delete a pod
+kubectl delete pod <pod-name> -n abdullah
+
+# Delete a deployment
+kubectl delete deployment <deployment-name> -n abdullah
+
+# =========================
+# GROUP 7: Scaling & Rolling Updates
+# =========================
+
+# Scale deployment to N replicas
+kubectl scale deployment <deployment-name> --replicas=<N> -n abdullah
+
+# Rolling update (change image)
+kubectl set image deployment/<deployment-name> <container-name>=<new-image> -n abdullah
+
+# =========================
+# GROUP 8: Debug / Misc
+# =========================
+
+# Get events in namespace
+kubectl get events -n abdullah
+
+# Top resource usage (nodes and pods)
+kubectl top nodes
+kubectl top pods -n abdullah
