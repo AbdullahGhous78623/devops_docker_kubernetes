@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'  // SonarQube Scanner tool name in Jenkins
+    }
+
+    stages {
+        // ----------------------
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/AbdullahGhous78623/Book-My-Show.git'
+            }
+        }
+
+        // ----------------------
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {   // Must match SonarQube server name in Jenkins
+                    dir('bookmyshow-app') {    // Flexible folder if code is in subfolder
+                        sh """
+                            $SCANNER_HOME/bin/sonar-scanner \
+                            -Dsonar.projectKey=abdullah \
+                            -Dsonar.projectName=abdullah \
+                            -Dsonar.sources=.
+                        """
+                    }
+                }
+            }
+        }
+
+        // ----------------------
+        stage('Docker Build, Tag, Push') {
+            steps {
+                script {
+                    dir('bookmyshow-app') {    // Dockerfile location
+                        withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                            sh 'docker build -t book-my-show:v1 .'
+                            sh 'docker tag book-my-show:v1 abdullah78623/book-my-show:v1'
+                            sh 'docker push abdullah78623/book-my-show:v1'
+                        }
+                    }
+                }
+            }
+        }
+
+        // ----------------------
+        stage('Deploy to Container') {
+            steps {
+                script {
+                    dir('bookmyshow-app') {    // App folder for Docker run
+                        // Stop old container and run new one
+                        sh 'docker rm -f book-my-show-container || true'
+                        sh 'docker run -d --name book-my-show-container -p 3000:3000 abdullah78623/book-my-show:v1'
+                    }
+                }
+            }
+        }
+
+        // ----------------------
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    withKubeConfig(
+                        caCertificate: '', 
+                        clusterName: '', 
+                        contextName: '', 
+                        credentialsId: 'k8s-token', 
+                        namespace: 'abdullah', 
+                        restrictKubeConfigAccess: false, 
+                        serverUrl: ''
+                    ) {
+                        // Apply Kubernetes manifests from k8s folder
+                        dir('k8s') {
+                            sh 'kubectl apply -f deployment.yml'
+                            sh 'kubectl apply -f service.yml'
+                        }
+
+                        // ----------------------
+                        // Helm deployment (commented out for now)
+                        /*
+                        dir('helm/mychart') {
+                            sh 'helm upgrade --install book-my-show . -n abdullah'
+                        }
+                        */
+                    }
+                }
+            }
+        }
+    }
+}
