@@ -1,0 +1,676 @@
+services:
+
+  nodejs:
+    build: .
+    container_name: nodejs-app
+    ports:
+      - '3001:3000'
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/transactionhistory
+    networks:
+      - monitoring-net
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data:/data/transactionhistory
+    networks:
+      - monitoring-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+    networks:
+      - monitoring-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=smtp.gmail.com:587
+      - GF_SMTP_USER=abdullah632.hitit@gmail.com
+      - GF_SMTP_PASSWORD=rppq jmaw dwrp iiig
+      - GF_SMTP_SKIP_VERIFY=true
+      - GF_SMTP_FROM_ADDRESS=abdullah632.hitit@gmail.com
+      - GF_SMTP_FROM_NAME=Grafana Alerts
+    networks:
+      - monitoring-net
+
+networks:
+  monitoring-net:
+    driver: bridge
+
+
+
+
+sqp_8cb1bbfe57345e73841bc15a2edbdaa880167cd9
+
+
+
+
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven3'       // Must match Jenkins Global Tool Configuration
+        jdk 'JAVA_HOME'      
+    }
+
+    environment {
+        SCANNER_HOME = tool 'sonar'  
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Msocial123/Petclinic.git'
+            }
+        }
+
+        stage('Compile Code') {
+            steps {
+                sh "mvn clean compile"
+            }
+        }
+
+        stage('Code Test') {
+            steps {
+                sh "mvn test"
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') { 
+                    sh """
+                        "${SCANNER_HOME}/bin/sonar-scanner" \
+                          -Dsonar.projectName=Abdullah-sonar-1 \
+                          -Dsonar.projectKey=sonar-qube-analysis \
+                          -Dsonar.sources=. \
+                          -Dsonar.java.binaries=target/classes \
+                          
+                    """
+                }
+            }
+        }
+    }
+}
+docker run -d --name sonarqube -p 9000:9000 -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true sonarqube:lts
+docker run -d --name sonar -p 9000:9000 sonarqube:community
+docker ps
+
+
+pipeline {
+    agent any
+    
+    environment {
+        SCANNER_HOME= tool 'sonar-scanner'
+    }
+
+    stages {
+        stage('git checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Msocial123/Transaction-History.git'
+            }
+        }
+        
+        stage('sonarqube analysis'){
+            steps{
+                withSonarQubeEnv('sonar') {
+                  sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=murali-proejct -Dsonar.projectName=murali-proejct '''
+                 }
+            }
+        }
+    }
+}
+
+sqp_edddc0879313d213c18309fa4813919a791dab14
+sqp_d26516a30c31e95ff6df8b6e72592f924d420183
+
+sudo apt-get update
+sudo apt-get install -y dotnet-sdk-8.0
+Github-token--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
+
+
+
+
+ Components in the Diagram
+1. Client
+
+The Docker Client is what you (the user) interact with.
+
+You use Docker CLI commands like:
+
+docker run → Run a container from an image.
+
+docker build → Build a new image from a Dockerfile.
+
+docker pull → Pull (download) an image from a remote registry.
+
+These commands don’t act directly; they are passed to the Docker Daemon.
+
+2. Docker Host
+
+This is the machine (server, VM, or EC2 instance) where Docker is running. It has key parts:
+
+Docker Daemon (dockerd)
+
+The “brain” of Docker.
+
+Listens to commands from the Client.
+
+Manages images, containers, volumes, and networks.
+
+Images
+
+Templates used to create containers.
+
+Example: Python, Redis, custom apps.
+
+Stored locally on the Docker Host.
+
+Containers
+
+Running instances of images.
+
+They are lightweight, isolated environments.
+
+Example: If you run the python image, it creates a Python container.
+
+3. Registry
+
+A Registry is a storage + distribution system for Docker images.
+
+Examples: Docker Hub (public), or Private Registry (AWS ECR, GCP Artifact Registry).
+
+Inside registry:
+
+Images → Pre-built and stored for reuse. (Nginx, Ubuntu, PostgreSQL, etc. in the diagram).
+
+You can push your own images there, or pull images to your host.
+
+
+dckr_pat_fhw76NcsZo--P3ZLWANWJy1_q6w--docker token
+
+
+ docker build -t login:v1 .
+docker tag login:v1 abdullah78623/login:v1
+docker login -u abdullah78623
+docker push abdullah78623/login:v1
+docker run -d --name login-app -p 80:80 login:v1
+docker volumes command
+
+yum install docker
+    2  docker --version
+    3  service docker start
+    4  mkdir project
+    5  cd project
+    6  touch index.html home.html signup.html login.html
+    7  ls
+    8  cd ..
+    9  ls
+   10  docker run -it --name sample ubuntu /bin/bash
+   11  docker ps
+   12  docker ps -a
+   13  docker start sample
+   14  docker attach sample
+   15  docker rm sample remove
+   16  docker rm sample
+   17  docker ps -a
+   18  docker run -it
+   19  docker run -it --name a2 -v /somyadeep ubuntu /bin/bash
+   20  docker volume ls
+   21  cd /var/lib/docker/volume
+   22  cd /var/lib/docker/volumes
+   23  ls
+   24  cd
+   25  b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   26  b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   27  cd
+   28  b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   29  cd b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   30  cd b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   31  pwd
+   32  cd /
+   33  pwd
+   34  cd volume b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   35  cd /var/lib/docker/volumes
+   36  cd volume b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   37  cd b6090920341cdcf87939522f2dc895038b9bcee7607f750e85d52496f542914d
+   38  ls
+   39  cd _data
+   40  ls
+
+
+docker run -it --name a4 -v myvolumedata:/dockerdata ubuntu /bin/bash
+
+   43  docker volume ls
+
+   44  cd /var/lib/docker/volumes
+
+   45  ls
+
+   46  cd myvolumedata
+
+   47  ls
+
+   48  cd _data
+
+   49  ls
+
+   50  cd /home/ec2-user
+
+   51  docker run -it --name a5 --privileged=true --volume-from a4 ubuntu /bin/bash
+
+   52  docker run -it --name a5 --privileged=true --volumes-from  a4 ubuntu /bin/bash
+ 
+
+   54  dockr ps -a
+
+   55  docker ps -a
+
+   56  docker volume ls
+
+   57  docker rm a4
+
+   58  docker ps -a
+
+   59  docker run -it --name a6 --privileged=true -v  myvolumedata
+
+   60  docker run -it --name a6 --privileged=true -v myvolumedata:/sinchan ubuntu /bin/bash
+ ls
+
+   63  mkdir bindproject
+
+   64  docker run -it --name a7 -v /home/ec2-user/bindproject:/devops ubuntu /bin/bash
+
+   65  docker volume ls
+
+   66  ls
+
+   67  cd bindproject
+
+   68  ls
+
+   69  docker volume ls
+
+   70  docker volume inspect myvolumedata
+
+   71  cd ..
+
+   72  exit
+ cd /home/ec2-user
+
+   92  pwd
+
+   93  docker volume create --name customerdb
+
+   94  docker volume ls
+
+   95  docker volume inspect customerdb
+
+   96  docker run -it -d --name web1 -v customerdb:/usr/share/nginx/html
+
+   97  docker run -it -d --name web1 -v customerdb:/usr/share/nginx/html nginx
+
+   98  docker exec web1 bash -c "echo 'allow from web1' /usr/share/nginx/html/index.html "
+
+   99  docker exec web1 curl localhost
+
+  100  docker exec web1 bash -c "echo 'allow from web1' > /usr/share/nginx/html/index.html "
+
+  101  docker exec web1 curl localhost
+
+  102  mkdir nginxvolume
+
+  103  cd nginxvolume
+
+  104  vi index.html
+
+  105  vi index.html
+
+  106  cat index.html
+
+  107  nano Dockerfile
+
+  108  docker build -t nginx-volume .
+
+  109  docker run -d -it --name nginxweb -p 8080:80 -v $(pwd):/usr/share/nginx/html nginx-volume
+
+  110  docker ps -a
+
+  111  ls
+
+  112  docker volume ls
+
+  113  docker volume inspect customerdb
+
+  114  cd /var/lib/docker/volumes/customerdb/_data
+
+  115  ls
+
+ 
+
+
+
+
+
+
+docker compose command
+
+yum install docker -y
+    2  service docker start
+    3  docker ps -a
+    4  curl -SL https://github.com/docker/compose/releases/download/v2.39.2/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+    5  chmod +x /usr/local/bin/docker-compose
+    6  docker compose --version
+    7  ls
+    8  mkdir test-compose
+    9  cd test-compose/
+   10  ls
+   11  vi docker-compose.yaml
+   12  docker-compose config
+   13  docker-compose up
+   14  docker-compose up -d
+   15  docker ps -a
+   16  ls
+   17  cat docker-compose.yaml
+   18  docker-compose ps
+   19  docker ps -a
+   20  docker-compose stop
+   21  docker ps -a
+   22  docker-compose start
+   23  docker ps -a
+   24  history
+
+new compose file
+services:
+
+   db:
+
+     image: mysql:5.7
+
+     volumes:
+
+       - db_data:/var/lib/mysql
+
+     restart: always
+
+     environment:
+
+       MYSQL_ROOT_PASSWORD: somewordpress
+
+       MYSQL_DATABASE: wordpress
+
+       MYSQL_USER: wordpress
+
+       MYSQL_PASSWORD: wordpress
+ 
+   wordpress:
+
+     depends_on:
+
+       - db
+
+     image: wordpress:latest
+
+     ports:
+
+       - "8000:80"
+
+     restart: always
+
+     environment:
+
+       WORDPRESS_DB_HOST: db:3306
+
+       WORDPRESS_DB_USER: wordpress
+
+       WORDPRESS_DB_PASSWORD: wordpress
+
+       WORDPRESS_DB_NAME: wordpress
+
+volumes:
+
+    db_data: {}
+ 98Ri/6hFxlFBEJO3PqiIbdEjZHwFoFEalkf4IQaG
+
+
+
+eksctl create cluster \
+  --name k8s-cluster-3 \
+  --region ap-south-1 \
+  --nodegroup-name nodes-3 \
+  --node-type c7i-flex.large \
+  --nodes 5 \
+  --zones ap-south-1b,ap-south-1a
+
+
+
+1. draw k8s architecture
+2. write pod yaml file, create pod and define each n every instruction of pod yaml
+3. prepare all commands of pod in k8s
+4. write replicaset yaml file, create rs and define each n every instruction of rs yaml
+5. prepare all commands of rs in k8s
+6. write deployment yaml , create it and define each n every instruction of deployment yaml
+7. prepare all commands of deployment in k8s
+8. write service yaml file for all 4 types and define each n every instruction of svc yaml
+9. prepare all commands of svc in k8s
+
+
+https://github.com/krishnatva/Todo_app.git
+https://github.com/harsha9052781670/MedicalBilling.git
+
+Embark link :https://myembark.wipro.com/
+SF link :https://wipro-bits-prd.launchpad.cfapps.eu10.hana.ondemand.com/site
+eksctl delete cluster --name k8s-cluster-3 --region ap-northwest-1
+
+aws secret:AW0DNybHC1aPQEFUWOvBOMzTWdej8Hn/efY35/KU
+
+muraliclahan526@gmail.com
+
+git clone https://github.com/teja-2502/Retail-App_kubernetes.git -b master
+ 
+git clone https://github.com/teja-2502/Retail-App_kubernetes.git -b master
+ 
+image: saiteja2502/userprofileretail:latest
+
+
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# --- Step 1: Update and install dependencies ---
+sudo apt update -y
+sudo apt install -y curl unzip tar
+
+# --- Step 2: Install eksctl ---
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+echo "Downloading eksctl..."
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+
+echo "Verifying eksctl checksum (optional)..."
+curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
+
+echo "Extracting eksctl..."
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
+sudo mv /tmp/eksctl /usr/local/bin/eksctl
+
+echo "eksctl installed successfully!"
+eksctl version
+
+# --- Step 3: Install kubectl ---
+echo "Downloading kubectl..."
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+echo "Downloading kubectl checksum..."
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+echo "Validating kubectl..."
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+
+echo "Installing kubectl..."
+chmod +x kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+echo "kubectl installed successfully!"
+kubectl version --client
+
+# --- Step 4: Install AWS CLI ---
+echo "Downloading AWS CLI..."
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+rm -rf awscliv2.zip aws
+
+echo "AWS CLI installed successfully!"
+aws --version
+
+# --- Step 5: Configure AWS CLI ---
+echo "Please enter your AWS credentials:"
+aws configure
+
+echo "Setup completed! You can now create your EKS cluster manually using:"
+echo "eksctl create cluster --name cluster1 --region us-east-1 --nodegroup-name workers --node-type t2.small --nodes 4 --zones us-east-1a,us-east-1b"
+
+ 
+ 
+http://a25e1d67f00f244139add63b3e87367c-841256891.us-east-1.elb.amazonaws.com:3130/
+
+docker-hub-token : dckr_pat_szLo9gKzeho5sv_YBm2HSzC_ltw
+
+	
+
+install jenkins in amazon linux
+sudo dnf update -y
+
+# Install Java 17 (Amazon Corretto)
+sudo dnf install java-17-amazon-corretto-devel -y
+
+# Add the Jenkins repository and import the key
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+# Install Jenkins
+sudo dnf install jenkins -y
+
+# Start and enable the Jenkins service
+sudo systemctl daemon-reload
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+
+rppq jmaw dwrp iiig
+
+
+https://www.youtube.com/watch?v=aWDIQMbp1cc&t=64s
+
+
+aws-key-7BQw6Shy8wHCpwY2foVj4RyUG4+Pks7igu9yS6VR
+
+
+kubectl apply -f  mongo_deployment.yml
+kubectl apply -f  service_mongo.yml 
+kubectl apply -f deployment.yml 
+kubectl apply -f app-service.yml 
+
+sudo usermod -aG docker jenkins
+
+aws iam attach-role-policy \
+  --role-name eksctl-k8s-cluster-2-nodegroup-nod-NodeInstanceRole-c6ZnrF5re8h3 \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+
+
+aws eks describe-addon --cluster-name k8s-cluster-2 --addon-name aws-ebs-csi-driver --region us-east-1
+
+
+
+
+Cluster-Level Alerts
+ 
+Cluster CPU Usage High
+ 
+Cluster Memory Usage High
+ 
+Node Not Ready
+ 
+Node Disk Pressure
+ 
+Node Memory Pressure
+ 
+Etcd High Latency
+ 
+Etcd Database Size Too Large
+ 
+API Server High Error Rate
+ 
+API Server High Latency
+ 
+Scheduler Errors
+ 
+Controller Manager Errors
+ 
+Pod Network Errors
+ 
+CNI / Pod Sandbox Failures
+ 
+Cluster CPU Capacity Exhausted
+ 
+Cluster Memory Capacity Exhausted
+ 
+Node Disk Usage High
+ 
+Namespace-Level Alerts
+ 
+Pod CrashLoopBackOff
+ 
+Pod Pending Too Long
+ 
+Pod OOMKilled (Out of Memory)
+ 
+High Pod Restart Rate
+ 
+Deployment Not Available (Unavailable replicas)
+ 
+StatefulSet Not Ready
+ 
+DaemonSet Not Ready
+ 
+Job Failed
+ 
+CronJob Missed Runs
+ 
+Namespace Resource Quota Exceeded
+15661
+
+eksctl create addon --name aws-ebs-csi-driver --cluster k8s-cluster-3 --region ap-northeast-2
+ 
+aws eks describe-nodegroup \
+  --cluster-name k8s-cluster-3 \
+  --nodegroup-name nodes-3 \
+  --region ap-northeast-2 \
+  --query "nodegroup.nodeRole" --output text
+
+
+aws iam attach-role-policy \
+  --role-name eksctl-k8s-cluster-3-nodegroup-nod-NodeInstanceRole-xz5npf14x2lp\
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+
+
+aws eks describe-addon --cluster-name k8s-cluster-3 --addon-name aws-ebs-csi-driver --region ap-northeast-2
+
