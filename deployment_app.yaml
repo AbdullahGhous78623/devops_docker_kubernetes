@@ -1,3 +1,37 @@
+
+# pod-and-replicaset.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: myapp
+spec:
+  containers:
+    - name: my-container
+      image: nginx
+
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-replicaset
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: my-container
+          image: nginx
+
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
